@@ -1,0 +1,569 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="/so/css/styles.css" rel="stylesheet" type="text/css" />
+<link href="/so/css/customer.css" rel="stylesheet" type="text/css" />
+<script src="/so/ajax/libs/jquery/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+  $(document).ready(function(){
+
+    function deleteSearchItemData(){
+      $('.searchContainer .results ul').html('');
+      $('.searchContainer .results button').remove();
+    }
+
+    function searchItemData(page){
+      var plunmbr_like = $('#search_item_no').val();
+      var pludesc_like = $('#search_item_desc').val();
+      //$('.searchContainer .results').html("");
+      deleteSearchItemData();
+      $.post(
+            "/so/api/search/item?page="+page, // Gets the URL to sent the post to
+            {data: "Search data", plunmbr: plunmbr_like, pludesc: pludesc_like}, // Serializes form data in standard format
+            function(data) {
+              if (data.status.success) {
+
+                  console.log('list ', data.list);
+
+                  $.each(data.list, function(i, val){
+
+                    console.log('i ', i);
+
+                    var item = $("<li>");
+                    var sku = $("<a>").html(val.skunmbr);
+                    sku.on('click', function(e){
+
+                      var cta = $(this);
+
+                      $("#barcode").val(cta.html()).focus();
+
+                       $('.searchContainer .results').html();
+
+
+
+                      $('.searchContainer').hide();
+
+
+
+
+
+                    });
+                    var data1 = $("<div>").addClass('data-col');
+
+                    data1.append(sku);
+
+                    var data2 = $("<div>").addClass('data-col').html(val.plunmbr);
+                    var data3 = $("<div>").addClass('data-col').html(val.pludesc);
+                    var data4 = $("<div>").addClass('data-col').html(val.qty1);
+                    var data5 = $("<div>").addClass('data-col').html(val.price1);
+
+                    item.append(data1);
+                     item.append(data2);
+                      item.append(data3);
+                       item.append(data4);
+                        item.append(data5);
+
+
+
+
+
+                    $('.searchContainer .results ul').append(item);
+
+
+
+                  })
+                  //window.location.replace("/so/itemlist");
+                  var next = $('<button>').attr('data-page', parseInt(data.page) + 1).addClass('nextResult').html('Next');
+                    next.on('click', function(e){
+
+                      searchItemData($(this).attr('data-page'));
+                    })
+                    $('.searchContainer .results').append(next);
+
+              } else {
+                  alert('FAILED: ' + data.status.message );
+              }
+            },"json" // The format the response should be in json
+          );
+
+    }
+
+    $('.searchContainer').hide();
+
+
+    $("#search").on('click', function(e){
+      $('.searchContainer').show();
+    });
+
+
+
+
+
+    $("#searchForm").on('submit', function(e){
+
+      e.preventDefault();
+      var form = $(this);
+      //var formData = new FormData(form);
+
+
+
+      // $.post("/api/search/",
+      //   formData,
+      //   function(res){
+      //     console.log('res: ', res);
+      //   });
+
+      var plunmbr_like = $('#search_item_no').val();
+      var pludesc_like = $('#search_item_desc').val();
+      //$('.searchContainer .results').html("");
+       deleteSearchItemData();
+
+      $.post(
+            "/so/api/search/item", // Gets the URL to sent the post to
+            {data: "Search data", plunmbr: plunmbr_like, pludesc: pludesc_like}, // Serializes form data in standard format
+            function(data) {
+              if (data.status.success) {
+
+                  console.log('list ', data.list);
+
+                  $.each(data.list, function(i, val){
+
+                    console.log('i ', i);
+
+                    var item = $("<li>");
+                    var sku = $("<a>").html(val.skunmbr);
+                    sku.on('click', function(e){
+
+                      var cta = $(this);
+
+                      $("#barcode").val(cta.html()).focus();
+
+                       $('.searchContainer .results').html();
+
+
+
+                      $('.searchContainer').hide();
+
+
+
+
+
+                    });
+                    var data1 = $("<div>").addClass('data-col');
+
+                    data1.append(sku);
+
+                    var data2 = $("<div>").addClass('data-col').html(val.plunmbr);
+                    var data3 = $("<div>").addClass('data-col').html(val.pludesc);
+                    var data4 = $("<div>").addClass('data-col').html(val.qty1);
+                    var data5 = $("<div>").addClass('data-col').html(val.price1);
+
+                    item.append(data1);
+                     item.append(data2);
+                      item.append(data3);
+                       item.append(data4);
+                        item.append(data5);
+
+
+
+
+                    $('.searchContainer .results ul').append(item);
+
+
+
+                  })
+                  //window.location.replace("/so/itemlist");
+                  var next = $('<button>').attr('data-page', parseInt(data.page) + 1).addClass('nextResult').html('Next');
+                    next.on('click', function(e){
+
+                      searchItemData($(this).attr('data-page'));
+                    })
+                    $('.searchContainer .results').append(next);
+
+              } else {
+                  alert('FAILED: ' + data.status.message );
+              }
+            },"json" // The format the response should be in json
+          );
+
+    });
+
+    // $("#search").on('click', function(e){
+    //   var form = $(this).closest('form')[0];
+    //   var soid = "{{so_no}}";
+    //   console.log('form ', form);
+    //   $.post(
+    //       window.open("/so/search", "SearchItem","menubar=1,resizable=1,width=800,height=600"), // Gets the URL to sent the post to
+    //       {data: "Search SO", so: soid}, // Serializes form data in standard format
+    //       function(data) {
+    //         if (data.status.success) {
+    //             //alert(data.status.error);
+    //             window.location.replace("/so/search");
+
+    //             /*for(var i = 0; i<data.list.length; i++){
+    //               $('div').addClass('data').html(data.list[i])
+    //             }*/
+    //         } else {
+    //             alert('FAILED: ' + data.status.message );
+    //         }
+    //       },"json" // The format the response should be in json
+    //     );
+    // })
+
+    $("#deleteso").on('click', function(e){
+      var form = $(this).closest('form')[0];
+      var soid = "{{so_no}}";
+      console.log('form ', form);
+      $.post(
+          "/so/api/so/deleteso", // Gets the URL to sent the post to
+          {data: "Delet So", so: soid}, // Serializes form data in standard format
+          function(data) {
+            if (data.status.success) {
+                //alert(data.status.error);
+                window.location.replace("/so/customer");
+
+                /*for(var i = 0; i<data.list.length; i++){
+                  $('div').addClass('data').html(data.list[i])
+                }*/
+            } else {
+                alert('FAILED: ' + data.status.message );
+            }
+          },"json" // The format the response should be in json
+        );
+    })
+
+    $("#cancel").on('click', function(e){
+      var form = $(this).closest('form')[0];
+      var soid = "{{so_no}}";
+      console.log('form ', form);
+      $.post(
+          "/so/api/so/cancelso", // Gets the URL to sent the post to
+          {data: "Cancel SO", so: soid}, // Serializes form data in standard format
+          function(data) {
+            if (data.status.success) {
+                //alert(data.status.error);
+                window.location.replace("/so/customer");
+            } else {
+                alert('FAILED: ' + data.status.message );
+            }
+          },"json" // The format the response should be in json
+        );
+    })
+
+    $("#save").on('click', function(e){
+      var form = $(this).closest('form')[0];
+      var soid = "{{so_no}}";
+      var user = "{{userid}}";
+      var purpose = "{{purpose}}";
+      var custnum = "{{custnmbr}}";
+      console.log('form ', form);
+      $.post(
+          "/so/api/so/savelist", // Gets the URL to sent the post to
+          {data: "save list", so: soid, userid: user, reason: purpose, custnmbr: custnum}, // Serializes form data in standard format
+          function(data) {
+            if (data.status.success) {
+                //alert(data.status.error);
+                window.location.replace("/so/customer");
+
+                /*for(var i = 0; i<data.list.length; i++){
+                  $('div').addClass('data').html(data.list[i])
+                }*/
+            } else {
+                alert('FAILED: ' + data.status.message );
+            }
+          },"json" // The format the response should be in json
+        );
+    })
+
+    $("#printso").on('click', function(e){
+      var form = $(this).closest('form')[0];
+      var soid = "{{so_no}}";
+      var IPAddress = "http://192.168.56.8/"
+      console.log('form ', form);
+      $.post(
+          "/so/api/so/printso", // Gets the URL to sent the post to
+          {data: "print so data", so: soid}, // Serializes form data in standard format
+          function(data) {
+            if (data.status.success) {
+                alert(data.status.returnMsg);
+
+
+                window.open("/so/pdf/invoice_" + soid + ".pdf", "_blank");   // This will auto open the new window for invoice.
+                window.location.replace("/so/customer");
+
+                //window.location.replace("/so/customer");
+
+                /*for(var i = 0; i<data.list.length; i++){
+                  $('div').addClass('data').html(data.list[i])
+                }*/
+            } else {
+                alert('FAILED: ' + data.status.message );
+            }
+          },"json" // The format the response should be in json
+        );
+
+
+    })
+
+    //$(document).on('submit',"form#add_item",function(e){
+    $('form#add_item').on('submit',function(e){
+      e.preventDefault();
+      console.log('form submitting..');
+      var form = $('#add_item')[0];
+
+      var $this = $(this);
+
+      var name = $this.find('[name=barcode]');
+      var recall_butt = $this.find('[name=recall]').click().val();
+      var save_butt = $this.find('[name=save]');
+      var printso_butt = $this.find('[name=printso]');
+      //alert(name.val());
+
+      //alert(recall_butt);
+
+      if(name.val() == "" || name.val() == null || name.val() == " "){
+        alert('Please enter/scan barcode number ');
+	 $('form#add_item')[0].reset();
+      }else{
+        var formData = new FormData(form);
+
+        $.post(
+          $this.attr("action"), // Gets the URL to sent the post to
+          $this.serialize(), // Serializes form data in standard format
+          function(data) {
+            if (data.status.success) {
+                //alert(data.status.error);
+                window.location.replace("/so/so_entry");
+            } else {
+                alert('FAILED: ' + data.status.message );
+		  $('form#add_item')[0].reset();
+            }
+          },"json" // The format the response should be in json
+        );
+      }
+    });
+  })
+
+  /*var clicked;
+  function validateForm() {
+      var x = document.forms["formname"]["barcode"].value;
+      if (clicked == "Save" || clicked == "Recall" || clicked == "PrintSO") {
+        return true;
+      } else {
+        if (x == null || x == "") {
+            alert("Please enter/scan barcode number");
+            return false;
+        }
+      }
+  }*/
+
+/*
+  function checkErr(){
+     alert({{ retErr }})
+      {% if retErr.length > 0  %}
+        alert({{ retErr }})
+      {% endif %}
+  }
+<script>  window.jQuery || document.write('<script src="/so/ajax/libs/jquery/jquery.min.js"><\/script>');<script>
+  var form = $('#formname')[0];
+  var formData = new FormData(form);
+  $.ajax({
+        url: '/api/item/save',
+        method: 'POST',
+        data: formData,
+        success: function(res){
+          if(res.error){
+            alert(res.error)
+          console.log(res.error);
+            return;
+          }else{
+            alert('Successfully Saved!')
+          }
+        },
+        error: function (xhr, status, error){
+          console.log('Failure');
+          alert("failure");
+      }
+  });
+   */
+
+</script>
+
+</head>
+<body class="framebg" onLoad="document.forms.formname.barcode.focus();">
+
+
+<form method="post" id="add_item" action="/so/api/item/save" name="formname" enctype="multipart/form-data">
+<input type="hidden" name="userid" value="{{ userid }}">
+<input type="hidden" name="custname" value="{{ custname }}">
+<input type="hidden" name="custnmbr" value="{{ custnmbr }}">
+<input type="hidden" name="purpose" value="{{ purpose }}">
+<input type="hidden" name="so_no" value="{{ so_no }}">
+<input type="hidden" name="tot_qty" value="{{ tot_qty }}">
+<input type="hidden" name="tot_price" value="{{ tot_price }}">
+
+
+<div class="wrap">
+<div class="total">
+  <div class="totalItem">SO No: <b>{{ so_no }}</b> </div>
+  <div class="totalItem">Qty: <b>{{ returnQty }}</b> </div>
+  <div class="totalItem">Price: <b>{{ returnPrice }}</b> </div>
+</div>
+{% if retErr.length > 0  %}
+  <div class="item_number">
+          <span> <b>{{ retErr }} </b> </span>
+  </div>
+
+{% endif %}
+<!--div class="cust_screen">
+  <div class="label"> Login as: <a href="/so/api/emp/logout/{{userid}}"> {{ userid }} </a></div>
+  <div class="label"> Customer Name: {{ custname }}</div>
+  <div class="label"> Quantity: </div>
+  <div class="custno"><input type="text" size="21" maxlength="20" name="quantity" id="quantity"></div>
+  <div class="label"> Scan/Enter Barcode: </div>
+  <div class="custno"><input type="text" size="21" maxlength="20" name="barcode" id="barcode"></div>
+</div>
+<div class="search"> <input class="mybutton" type="button" name="search" id="search" value="Search"> </div>
+<div class="search"> <input class="mybutton1" type="submit" value="Submit"></div -->
+<table id="table_id1">
+    <tr>
+      <td>
+          Login as:
+      </td>
+      <td>
+          <a href="/so/api/emp/logout/{{userid}}"> {{ userid }} </a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+          Customer Name:
+      </td>
+      <td>
+          {{ custname }}
+      </td>
+    </tr>
+  {% if selected_reprint == 0  %}
+    <tr>
+      <td>
+          Quantity:
+      </td>
+      <td>
+          <input type="text" size="21" maxlength="20" name="quantity" placeholder="Enter Number of Quantity">
+      </td>
+    </tr>
+    <tr>
+      <td> Scan/Enter Barcode: </td>
+      <td>
+          <input type="text" size="21" maxlength="20" name="barcode" id="barcode" placeholder="Enter/Scan Barcode Number">
+          <div class="search"> <input class="mybutton" type="button" name="search" id="search" value="Search"> </div>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>
+          <input class="mybutton1" type="submit" value="Submit">
+      </td>
+    </tr>
+  {% else %}
+    <tr>
+      <td>
+        <br><br>
+      </td>
+    </tr>
+  {% endif %}
+</table>
+<br>
+<div class="item header-items">
+  <div class="item_number"> No.  </div>
+  <div > Item number  </div>
+  <div> Item Description  </div>
+  <div class="item_price"> Regular Price  </div>
+  <div class="item_price"> Quantity  </div>
+  <div class="item_price"> Total Price  </div>
+{% if selected_reprint == 0  %}
+  <div>      Actions</div>
+{% endif %}
+</div>
+
+{% set rec_counter = 0 %}
+{% for item in returnMsg %}
+  {% set rec_counter = rec_counter + 1 %}
+  <div class="item">
+    <div class="item_number">
+      <span> No.  </span>
+       {{rec_counter}}
+    </div>
+    <div class="item_plu_number">
+    <span> Item number.  </span>
+      {{ item.plunmbr }}
+    </div>
+    <div class="item_description">
+    <span> Item Description  </span>
+    {{ item.pludesc }}
+    </div>
+    <div class="item_price">
+    <span> Regular Price  </span>
+    {{ item.regprice }}
+    </div>
+    <div class="item_quantity">
+    <span> Quantity  </span>
+    {{ item.qty }}
+    </div>
+    <div class="item_total_price">
+    <span> Total Price  </span>
+    {{ item.totalprice }}
+    </div>
+{% if selected_reprint == 0  %}
+    <div class="item_cta">
+      <a href="/so/api/item/delete/{{item.plunmbr}}/{{userid}}/{{custnmbr}}/{{so_no}}/{{purpose}}/{{custname}}"> Delete </a>
+    </div>
+{% endif %}
+  </div>
+{% endfor %}
+{% if selected_reprint == 0  %}
+<div class="actions">
+  <input class="mybutton" type="button" id="deleteso" name="deleteso" value="DeleteSO" >
+  <input class="mybutton" type="button" id="save" name="save" value="Save">
+  <input class="mybutton" type="button" id="printso" name="printso" value="PrintSO">
+  <input class="mybutton" type="button" id="cancel" name="cancel" value="Cancel">
+</div>
+{% else %}
+<div class="actions1">
+  <input class="mybutton" type="button" id="printso" name="printso" value="PrintSO">
+</div>
+{% endif %}
+</div>
+
+</form>
+
+
+<div class="searchContainer">
+  <div class="searchContainer_overlay">
+    <div class="searchContainer_wrap">
+        <form method="POST" id="searchForm" action="/api/search/">
+          <input type="text" id="search_item_no" name="search_item_no" placeholder="Search by Item No" />
+          <input type="text" id="search_item_desc" name="search_item_desc" placeholder="Search by Item Desc" />
+
+          <input type="submit" value="Search" >
+        </form>
+
+        <div class="results">
+
+          <ul>
+          </ul>
+        </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+</body>
+</html>
+
+<!--/div-->

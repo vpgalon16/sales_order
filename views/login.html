@@ -1,0 +1,136 @@
+<!--link href="/css/styles.css" rel="stylesheet"></link>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<div-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="/so/css/styles.css" rel="stylesheet" type="text/css" />
+<link href="/so/css/customer.css" rel="stylesheet" type="text/css" />
+<script src="/so/ajax/libs/jquery/jquery.min.js"></script>
+<script>
+
+$(document).ready(function(){
+
+    $("#resetBtn").on('click', function(e){
+      var form = $(this).closest('form')[0];
+      var soid = "{{so_no}}";
+      console.log('form ', form);
+      $.post(
+          "/so/api/reset", // Gets the URL to sent the post to
+          {data: "Login reset", so: soid}, // Serializes form data in standard format
+          function(data) {
+            if (data.status.success) {
+                alert(data.status.message);
+                window.location.replace("/so/");
+            } else {
+                alert('FAILED: ' + data.status.message );
+            }
+          },"json" // The format the response should be in json
+        );
+    })
+
+  $(document).on('submit',"form#login_info",function(e){
+
+    console.log('form submitting..');
+    var form = $('#login_info')[0];
+
+    e.preventDefault();
+
+
+    var $this = $(this);
+
+    var name = $this.find('[name=emploginname]');
+
+    console.log('name: ', name.val());
+    if(name.val() != "" || name.val() != null){
+
+      var formData = new FormData(form);
+
+      $.post(
+        $this.attr("action"), // Gets the URL to sent the post to
+        $this.serialize(), // Serializes form data in standard format
+        function(data) {
+          if (data.success) {
+                        //document.location.reload();
+            //alert('success ' + data.message );
+            window.location.replace("/so/customer");
+          } else {
+            alert('FAILED: ' + data.message );
+	     //$('form#login_info')[0].reset();
+          }
+        },"json" // The format the response should be in json
+      );
+    }else{
+      alert('No employee login name ');
+      //$('form#login_info')[0].reset();
+    }
+  });
+})
+
+
+function validateForm() {
+
+    var x = document.forms["formname"]["emploginname"].value;
+    if (x == null || x == "") {  // Check for empty
+        alert("User name is empty, Please try again");
+        return false;
+    }
+    if (isNaN(x)) {  // Check for alpha
+        alert("User name can only accept numeric..");
+        return false;
+    }
+    var y = document.forms["formname"]["emploginpasswd"].value;
+    if (y == null || y == "") {
+        alert("Password is empty, Please try again");
+        return false;
+    }
+}
+</script>
+</head>
+<body  class="framebg" onLoad="document.forms.formname.emploginname.focus()">
+
+<form method="post" id="login_info" action="/so/api/login" name="formname" enctype="multipart/form-data">
+
+    <!--div class="wrap">
+    <h2> TPLinux Mobile Login</h2>
+    <table id="table_id1">
+      <tr>
+        <td> Login Name: </td>
+        <td> <input type="text" name="emploginname"> </td>
+      </tr>
+      <tr>
+        <td> Password: </td>
+        <td> <input type="password" name="emploginpasswd"> </td>
+      </tr>
+      <tr>
+        <td> </td>
+        <td>
+      <div class="actions1">
+        <input class="mybutton"  type="submit" value="Submit">
+        </td>
+      </div>
+      </tr>
+    </table>
+    {% if Message.length > 0  %}
+      <div class="item_number">
+              <span> {{ Message }}  </span>
+      </div>
+    {% endif %}
+    </div-->
+<div class="mainform">
+  <div class="cust_screen">
+    <div> <h2> TPLinux Login</h2> </div>
+    <div class="label">  Login Name: </div>
+    <div class="custno"><input type="text" size="10" maxlength="20" name="emploginname" id="emploginname" placeholder="Enter Login Name"></div>
+    <div class="label">  Password: </div>
+    <div class="custno"><input type="password" size="10" maxlength="20" name="emploginpasswd" id="emploginpasswd" placeholder="Enter Password"></div>
+  </div>
+    <div class="actions1">
+      <input class="mybutton" id="resetBtn" type="button" value="Reset">
+       <input class="mybutton" type="submit" value="Submit"> </td>
+     </div>
+</div>
+</form>
+</body>
+</html>

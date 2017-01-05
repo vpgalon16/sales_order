@@ -1,0 +1,432 @@
+<!--link href="/css/styles.css" rel="stylesheet"></link>
+<div-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="/so/css/styles.css" rel="stylesheet" type="text/css" />
+<link href="/so/css/customer.css" rel="stylesheet" type="text/css" />
+<script src="/so/ajax/libs/jquery/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+
+     function deleteSearchItemData(){
+      $('.searchContainer .results ul').html('');
+      $('.searchContainer .results button').remove();
+
+    }
+
+
+    function searchItemData(page){
+      var custnmbr_like = $('#search_cust_no').val();
+      var custname_like = $('#search_cust_name').val();
+      //$('.searchContainer .results').html("");
+      deleteSearchItemData();
+      $.post(
+            "/so/api/search/cust?page="+page, // Gets the URL to sent the post to
+            {data: "Search data", custnmbr: custnmbr_like, custname: custname_like}, // Serializes form data in standard format
+            function(data) {
+              if (data.status.success) {
+
+                  console.log('list ', data.list);
+
+                  $.each(data.list, function(i, val){
+
+                    console.log('i ', i);
+
+                    var item = $("<li>");
+                    var customer = $("<a>").html(val.custnmbr);
+                    customer.on('click', function(e){
+
+                      var cta = $(this);
+
+                      $("#custnmbr").val(cta.html()).focus();
+
+                       $('.searchContainer .results').html();
+
+                      $('.searchContainer').hide();
+
+                    });
+                    var data1 = $("<div>").addClass('data-col');
+
+                    data1.append(customer);
+
+                    var data2 = $("<div>").addClass('data-col').html(val.lastname);
+                    var data3 = $("<div>").addClass('data-col').html(val.firstname);
+                    var data4 = $("<div>").addClass('data-col').html(val.birthname);
+
+                    item.append(data1);
+                     item.append(data2);
+                      item.append(data3);
+                       item.append(data4);
+
+                    $('.searchContainer .results ul').append(item);
+
+                  })
+                  //window.location.replace("/so/itemlist");
+                  var next = $('<button>').attr('data-page', parseInt(data.page) + 1).addClass('nextResult').html('Next');
+                    next.on('click', function(e){
+
+                      searchItemData($(this).attr('data-page'));
+                    })
+                    $('.searchContainer .results').append(next);
+
+              } else {
+                  alert('FAILED: ' + data.status.message );
+              }
+            },"json" // The format the response should be in json
+          );
+
+    }
+
+    $('.searchContainer').hide();
+
+
+    $("#search").on('click', function(e){
+      $('.searchContainer').show();
+    });
+
+
+
+
+
+    $("#searchForm").on('submit', function(e){
+
+      e.preventDefault();
+      var form = $(this);
+      //var formData = new FormData(form);
+
+
+
+      // $.post("/api/search/",
+      //   formData,
+      //   function(res){
+      //     console.log('res: ', res);
+      //   });
+
+      var custnmbr_like = $('#search_cust_no').val();
+      var custname_like = $('#search_cust_name').val();
+      //$('.searchContainer .results').html("");
+       deleteSearchItemData();
+
+      $.post(
+            "/so/api/search/cust", // Gets the URL to sent the post to
+            {data: "Search data", custnmbr: custnmbr_like, custname: custname_like}, // Serializes form data in standard format
+            function(data) {
+              if (data.status.success) {
+
+                  console.log('list ', data.list);
+
+                  $.each(data.list, function(i, val){
+
+                    console.log('i ', i);
+
+                    var item = $("<li>");
+                    var customer = $("<a>").html(val.custnmbr);
+                    customer.on('click', function(e){
+
+                      var cta = $(this);
+
+                      $("#custnmbr").val(cta.html()).focus();
+
+                       $('.searchContainer .results').html();
+
+                      $('.searchContainer').hide();
+
+                    });
+                    var data1 = $("<div>").addClass('data-col');
+
+                    data1.append(customer);
+
+                    var data2 = $("<div>").addClass('data-col').html(val.lastname);
+                    var data3 = $("<div>").addClass('data-col').html(val.firstname);
+                    var data4 = $("<div>").addClass('data-col').html(val.birthname);
+
+                    item.append(data1);
+                     item.append(data2);
+                      item.append(data3);
+                       item.append(data4);
+
+                    $('.searchContainer .results ul').append(item);
+
+                  })
+                  //window.location.replace("/so/itemlist");
+                  var next = $('<button>').attr('data-page', parseInt(data.page) + 1).addClass('nextResult').html('Next');
+                    next.on('click', function(e){
+
+                      searchItemData($(this).attr('data-page'));
+                    })
+                    $('.searchContainer .results').append(next);
+
+              } else {
+                  alert('FAILED: ' + data.status.message );
+              }
+            },"json" // The format the response should be in json
+          );
+
+    });
+ 
+  // $('.sono').on('click',function(e){
+  //    var elem = $(this);
+  //    var elemData = elem.val();
+  //    console.log('clicked radio');
+
+  //     $.post("/so/api/cust/recall/select", {data: elemData},
+  //       function(data){
+
+  //         console.log('selected');
+
+
+  //       }
+  //     );
+
+
+  // })
+
+  $('#rprntBtn').on('click', function(e){
+    var custnmbr = $('#custnmbr').val();
+    $.post(
+          "/so/api/cust/reprint", // Gets the URL to sent the post to
+          {data: custnmbr}, // Serializes form data in standard format
+          function(data) {
+            if (data.status.success) {
+                //alert(data.list);
+                //window.location.replace("/so/customer");
+
+                //$('.recall_list').delete(elem);
+                //$('.recall_list').delete(elemlabel);
+                $('.recall_list').html("");
+                for(var i = 0; i<data.list.length; i++){
+                  var item = data.list[i];
+                  var elem = $('<input type="radio" class="sono">').attr('name','sono').attr('id',item.salesorderno).addClass('data').val(item.salesorderno).html(item.salesorderno);
+
+                  elem.css('font-size', '10pt');
+                  elem.on('click', function(e){
+
+                     var elem = $(this);
+                     var elemData = elem.val();
+                     console.log('clicked radio');
+
+                      $.post("/so/api/cust/recall/select", {data: elemData},
+                        function(data){
+                          console.log('selected');
+                        }
+                      );
+
+                  })
+                  var elemlabel =  $('<label style="font-size: 10pt;">').attr('for',item.salesorderno).html(item.salesorderno);
+
+                  $('.recall_list').append(elem);
+                  $('.recall_list').append(elemlabel);
+                }
+            } else {
+                alert('FAILED: ' + data.status.message );
+            }
+          },"json" // The format the response should be in json
+        );
+  })
+
+  $('#recallBtn').on('click', function(e){
+    var custnmbr = $('#custnmbr').val();
+    $.post(
+          "/so/api/cust/recall", // Gets the URL to sent the post to
+          {data: custnmbr}, // Serializes form data in standard format
+          function(data) {
+            if (data.status.success) {
+                //alert(data.list);
+                //window.location.replace("/so/customer");
+
+                //$('.recall_list').delete(elem);
+                //$('.recall_list').delete(elemlabel);
+                $('.recall_list').html("");
+                for(var i = 0; i<data.list.length; i++){
+                  var item = data.list[i];
+                  var elem = $('<input type="radio" class="sono">').attr('name','sono').attr('id',item.salesorderno).addClass('data').val(item.salesorderno).html(item.salesorderno);
+
+                  elem.css('font-size', '10pt');
+                  elem.on('click', function(e){
+
+                     var elem = $(this);
+                     var elemData = elem.val();
+                     console.log('clicked radio');
+
+                      $.post("/so/api/cust/recall/select", {data: elemData},
+                        function(data){
+                          console.log('selected');
+                        }
+                      );
+
+                  })
+                  var elemlabel =  $('<label style="font-size: 10pt;">').attr('for',item.salesorderno).html(item.salesorderno);
+
+                  $('.recall_list').append(elem);
+                  $('.recall_list').append(elemlabel);
+                }
+            } else {
+                alert('FAILED: ' + data.status.message );
+            }
+          },"json" // The format the response should be in json
+        );
+  })
+
+    //$(document).on('submit',"form#add_item",function(e){
+    $('form#cust_nmbr').on('submit',function(e){
+      e.preventDefault();
+      console.log('form submitting..');
+      var form = $('#cust_nmbr')[0];
+
+      var $this = $(this);
+
+      var name = $this.find('[name=custnmbr]');
+      //alert(name.val());
+
+      //alert(recall_butt);
+
+      if(name.val() == "" || name.val() == null || name.val() == " "){
+        alert('Please enter customer number...');
+	 $('form#cust_nmbr')[0].reset();
+      }else{
+        var formData = new FormData(form);
+
+        $.post(
+          $this.attr("action"), // Gets the URL to sent the post to
+          $this.serialize(), // Serializes form data in standard format
+          function(data) {
+            if (data.status.success) {
+                //alert(data.status.error);
+                window.location.replace("/so/so_entry");
+            } else {
+                alert('FAILED: ' + data.status.message );
+		  $('form#cust_nmbr')[0].reset();
+            }
+          },"json" // The format the response should be in json
+        );
+      }
+    });
+
+});
+function validateForm() {
+    var x = document.forms["formname"]["custnmbr"].value;
+    if (x == null || x == "") {
+        alert("Please enter customer number");
+        return false;
+    }
+}
+</script>
+
+</head>
+
+<body class="framebg" onLoad="document.forms.formname.custnmbr.focus()">
+
+<form method="post" id="cust_nmbr" action="/so/api/cust/save" name="formname"  enctype="multipart/form-data">
+<input type="hidden" name="userid" value="{{ Message }}">
+<input type="hidden" name="so_no" value="{{ so_no }}">
+<div class="mainform">
+  <div class="total">
+    <div class="totalItem1"> Login as: <a href="/so/api/emp/logout/{{Message}}"> {{ Message }} </a> </div>
+  </div>
+  <!--table id="table_id1">
+    <tr>
+      <td> Purpose: </td>
+      <td>
+        <div class="styled-select blue rounded">
+           <select name="purpose">
+            <option value="RETAIL">Retail</option>
+            <option value="WHOLESALE">Wholesale</option>
+          </select>
+        </div>        
+      </td>
+    </tr>
+    <tr>
+      <td> Customer No: </td>
+      <td> <input type="text" size="21" maxlength="20" name="custnmbr" id="custnmbr"> 
+      <div class="search1"> <input class="mybutton1" type="button" name="search" id="search" value="Search"> </div> </td>
+    </tr>
+    <tr>
+      <td>    </td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>
+        <br>
+    <div class="actions">
+      <input class="mybutton" id="recallBtn" type="button" value="Recall">
+      <input class="mybutton" id="rprntBtn" type="button" value="Reprint SO">
+       <input class="mybutton" type="submit" value="Submit"> </td>
+     </div>
+    </tr>
+  </table-->
+
+    <div class="cust_screen">
+      <div class="label">  Purpose: </div>
+      <div class="styled-select blue semi-square">
+         <select name="purpose">
+          <option value="RETAIL">Retail</option>
+          <option value="WHOLESALE">Wholesale</option>
+        </select>
+      </div>        
+      <div class="label">  Customer No: </div>
+      <div class="custno"><input type="text" size="15" maxlength="20" name="custnmbr" id="custnmbr"  placeholder="Enter Customer Number"></div>
+     <div class="search2"><input class="mybutton2" type="button" name="search" id="search" value="Search"> </div>
+    </div>
+
+    <div class="actions">
+      <input class="mybutton" id="recallBtn" type="button" value="Recall">
+      <input class="mybutton" id="rprntBtn" type="button" value="Reprint SO">
+       <input class="mybutton" type="submit" value="Submit"> </td>
+     </div>
+
+        <div class="recall_list">
+        </div>
+
+  {% if errMsg.length > 0  %}
+  <table id="t01">
+    </tr>
+      <th></th>
+      <th color="red">{{ errMsg }}</th>
+    <tr>
+    </tr>
+  </table>
+  {% endif %}
+</div>
+<br>
+<br>
+<br>
+</form>
+<div class="searchContainer">
+  <div class="searchContainer_overlay">
+    <div class="searchContainer_wrap">
+        <form method="POST" id="searchForm" action="/api/search/">
+          <input type="text" id="search_cust_no" name="search_cust_no" placeholder="Search by Customer No" />
+          <input type="text" id="search_cust_name" name="search_cust_name" placeholder="Search by Customer Lastname" />
+
+          <input type="submit" value="Search" >
+        </form>
+
+        <div class="results">
+
+          <ul>
+          </ul>
+
+
+         <!--  <ul>
+            <li>
+              <div class="data-col" > Ako ay data </div>
+
+              <div class="data-col" > Ako ay data </div>
+              <div class="data-col" > Ako ay data </div>
+
+              <div class="data-col" > Ako ay data </div>
+              <div class="data-col" > Ako ay data </div>
+            </li>
+          </ul> -->
+
+        </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
+
+<!--/div-->

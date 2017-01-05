@@ -1,0 +1,100 @@
+<!--link href="/css/styles.css" rel="stylesheet"></link>
+<div-->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+    width:40%;
+}
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+table#t01 tr:nth-child(even) {
+    background-color: #eee;
+}
+table#t01 tr:nth-child(odd) {
+   background-color:#fff;
+}
+table#t01 th  {
+    background-color: blue;
+    color: white;
+}
+</style>
+</head>
+<body>
+
+<form method="post" id="add_item" action="/so/api/item/recall">
+<h2> Enter SO Number:
+  <input type="text" name="sonumber" value="00001">
+  <input type="submit" value="Submit">
+</h2>
+</form>
+
+<br>
+
+<table id="t01">
+<tr>
+  <th> No.  </th>
+  <th> Item number  </th>
+  <th> Item Description  </th>
+  <th> Regular Price  </th>
+  <th> Quantity  </th>
+  <th> Total Price  </th>
+  <th> </th>
+</tr>
+{% for item in itemslist %}
+<tr>
+  <td align="center">
+    {{item.id}}
+  </td>
+  <td align="center">
+    {{item.plunmbr}}
+  </td>
+  <td align="center">
+    {{item.pludesc}}
+  </td>
+  <td  align="right">
+    {{item.regprice}}
+  </td>
+  <td align="center">
+    {{item.qty}}
+  </td>
+  <td  align="right">
+    {{item.regprice*item.qty}}
+  </td>
+  <td>
+    <a href="/so/item/delete/{{item.id}}"> Delete </a>
+  </td>
+</tr>
+
+{% endfor %}
+<tr>
+  <th>  </th>
+  <th>
+    Total:
+  </th>
+  <th>  </th>
+  <th>  </th>
+  <th>  </th>
+  <th align="right">150.00 </th>
+  <th>  </th>
+</tr>
+</table>
+<br>
+  <input type="submit" value="Save">
+  <input type="submit" value="PrintSO">
+<br>
+<br>
+<h3> {{ Message }} </h3>
+<br>
+<br>
+
+</body>
+</html>
+
+<!--/div-->

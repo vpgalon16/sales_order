@@ -1,0 +1,13 @@
+<form method="post" id="church_member_info" action="/jaoapp/api/member/save">
+  Login name: <input type="text" name="username" value="{{ member.username }}"><br>
+  Password: <input type="password" name="password" value="{{ member.password }}"><br>
+  First name: <input type="text" name="firstname" value="{{ member.firstname }}"><br>
+  Last name: <input type="text" name="lastname" value="{{ member.lastname }}"><br>
+  Gender: <input type="text" name="gender" value="{{ member.gender }}"><br>
+  Age: <input type="text" name="age" value="{{ member.age }}"><br>
+  Ministry: <input type="text" name="ministry" value="{{ member.ministry }}"><br>
+  Status: <input type="text" name="status" value="{{ member.status }}"><br>
+  <input type="hidden" value="{{ member.id }}" name="id">
+  <input type="submit" value="Submit">
+</form>
+

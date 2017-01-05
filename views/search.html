@@ -1,0 +1,88 @@
+<!--link href="/css/styles.css" rel="stylesheet"></link>
+<div-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="/so/css/styles.css" rel="stylesheet" type="text/css" />
+<script src="/so/ajax/libs/jquery/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+
+  $('#button_').on('click', function(e){
+    var plunmbr_like = $('#plunmbr_like').val();
+    var pludesc_like = $('#pludesc_like').val();
+    $.post(
+          "/so/api/search/item", // Gets the URL to sent the post to
+          {data: "Search data", plunmbr: plunmbr_like, pludesc: pludesc_like}, // Serializes form data in standard format
+          function(data) {
+            if (data.status.success) {
+                alert(data.status.message);
+                window.location.replace("/so/itemlist");
+            } else {
+                alert('FAILED: ' + data.status.message );
+            }
+          },"json" // The format the response should be in json
+        );
+  })
+
+
+});
+function validateForm() {
+    var x = document.forms["formname"]["custnmbr"].value;
+    if (x == null || x == "") {
+        alert("Please enter customer number");
+        return false;
+    }
+}
+</script>
+
+</head>
+
+<body class="framebg" onLoad="document.forms.search_id.plunmbr_like.focus()">
+
+<form method="post" id="search_id" action="/so/api/search/item" name="search_id"  enctype="multipart/form-data">
+<div class="wrap1">
+  <table class="formular-table">
+    <tbody>
+    <tr>
+      <td align="center">
+        <h2 class="formular-heading">Search Item Record </h2>
+        <p></p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table class="maintable" width="100%">
+          <tbody>
+              <tr id="tableRow1">
+                  <td colspan="1" align="left" width="50%">Item No:  </td>
+                  <td colspan="1" align="left"><input class="textfield" size="21" maxlength="20" id="plunmbr_like" name="plunmbr_like" value=""></td>
+              </tr>
+              <tr id="tableRow2">
+                  <td colspan="1" align="left">Item Description:  </td>
+                  <td colspan="1" align="left"><input class="textfield" size="21" maxlength="20" id="pludesc_like" name="pludesc_like" value=""></td>
+              </tr>
+              <tr id="tableRow3">
+                  <td colspan="2" align="center">
+                    <hr>
+                  </td>
+              </tr>
+              <tr id="tableRow4">
+                  <td colspan="1" align="center"></td>
+                  <td colspan="1" align="center"><input class="mybutton1"  name="button_" id="button_" value="Search" type="button"></td>
+              </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+        <div class="recall_list">
+        </div>
+</form>
+</body>
+</html>
+
+<!--/div-->
